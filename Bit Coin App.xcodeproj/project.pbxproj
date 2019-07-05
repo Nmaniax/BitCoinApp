@@ -12,6 +12,7 @@
 		5019360A22CBD35700BB54AA /* CoinProps+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5019360822CBD35700BB54AA /* CoinProps+CoreDataProperties.swift */; };
 		5075F01522CD0D71005F56A2 /* PersistenceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5075F01422CD0D71005F56A2 /* PersistenceService.swift */; };
 		508D2E2E22CBC625002AC24A /* CoinModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 508D2E2D22CBC625002AC24A /* CoinModel.swift */; };
+		50C3F28122CFB7C80006A80D /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 50C3F28022CFB7C80006A80D /* .gitignore */; };
 		50F8E79622C2923400D50A9B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50F8E79522C2923400D50A9B /* AppDelegate.swift */; };
 		50F8E79B22C2923400D50A9B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 50F8E79922C2923400D50A9B /* Main.storyboard */; };
 		50F8E79D22C2923500D50A9B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 50F8E79C22C2923500D50A9B /* Assets.xcassets */; };
@@ -44,6 +45,7 @@
 		5019360822CBD35700BB54AA /* CoinProps+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CoinProps+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		5075F01422CD0D71005F56A2 /* PersistenceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceService.swift; sourceTree = "<group>"; };
 		508D2E2D22CBC625002AC24A /* CoinModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoinModel.swift; sourceTree = "<group>"; };
+		50C3F28022CFB7C80006A80D /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		50F8E79222C2923400D50A9B /* Bit Coin App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Bit Coin App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		50F8E79522C2923400D50A9B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		50F8E79A22C2923400D50A9B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -87,6 +89,7 @@
 		50F8E78922C2923400D50A9B = {
 			isa = PBXGroup;
 			children = (
+				50C3F28022CFB7C80006A80D /* .gitignore */,
 				50F8E79422C2923400D50A9B /* Bit Coin App */,
 				50F8E7A922C2923600D50A9B /* Bit Coin AppTests */,
 				50F8E7B422C2923600D50A9B /* Bit Coin AppUITests */,
@@ -244,6 +247,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				50C3F28122CFB7C80006A80D /* .gitignore in Resources */,
 				50F8E7A022C2923500D50A9B /* LaunchScreen.storyboard in Resources */,
 				50F8E79D22C2923500D50A9B /* Assets.xcassets in Resources */,
 				50F8E79B22C2923400D50A9B /* Main.storyboard in Resources */,
