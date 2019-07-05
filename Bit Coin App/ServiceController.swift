@@ -163,7 +163,7 @@ class ServiceController: UIViewController{
             print("(!) \(code) Empty")
             return "empty"
         }
-        coins[code] = fetchList[0]
+        coins[code] = fetchList.last
         print("NotEmpty \(String(describing: coins[code]!.rate))")
         return "notEmpty"
     }
