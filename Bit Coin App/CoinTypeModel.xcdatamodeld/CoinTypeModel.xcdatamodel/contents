@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14490.99" systemVersion="18F132" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="CoinProperty" representedClassName="CoinProperty" syncable="YES" codeGenerationType="class">
+        <attribute name="code" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="rate" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="CoinStruct" representedClassName="CoinStruct" syncable="YES" codeGenerationType="class"/>
+    <entity name="CoinType" representedClassName="CoinType" syncable="YES" codeGenerationType="class"/>
+    <entity name="Entity" representedClassName="Entity" syncable="YES" codeGenerationType="class"/>
+    <elements>
+        <element name="CoinProperty" positionX="-63" positionY="-18" width="128" height="75"/>
+        <element name="CoinStruct" positionX="-450.91796875" positionY="-16.765625" width="128" height="45"/>
+        <element name="CoinType" positionX="-265.20703125" positionY="-40.16796875" width="128" height="45"/>
+        <element name="Entity" positionX="-261" positionY="-18" width="128" height="45"/>
+    </elements>
+</model>
