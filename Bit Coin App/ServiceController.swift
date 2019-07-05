@@ -21,6 +21,8 @@ class ServiceController: UIViewController{
     var defaultColor: UIColor?
     
     var coins: [String: CoinProps] = [:]
+    var requestCoins: [CoinProps] = []
+    
     
     struct CoinType: Codable{
         //bpi segment in the recived json
@@ -52,15 +54,53 @@ class ServiceController: UIViewController{
             case rate
         }
     }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+
         self.defaultColor = buttonUSD.backgroundColor
-        connectionToAPI("USD") //Default call must be USD
+        
+        //Load from database
+        let fetchRequest: NSFetchRequest<CoinProps> = CoinProps.fetchRequest()
+        getFromDataBase(fetchRequest)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         //Buttons should be disable until the connection is complete
-        enableButtons(false)
+        if coins.isEmpty {
+            enableButtons(false)
+        }
+    }
+    
+    func getFromDataBase(_ request: NSFetchRequest<CoinProps>){
+        var fetchIsEmpty: String = "notEmpty"
+        do {
+            request.predicate = NSPredicate(format: "code == %@", "USD")
+            var coinReturn = try PersistenceService.context.fetch(request)
+            fetchIsEmpty = loadCoreDataObject(coinReturn, "USD")
+            
+            request.predicate = NSPredicate(format: "code == %@", "EUR")
+            coinReturn = try PersistenceService.context.fetch(request)
+            fetchIsEmpty = loadCoreDataObject(coinReturn, "EUR")
+            
+            request.predicate = NSPredicate(format: "code == %@", "GBP")
+            coinReturn = try PersistenceService.context.fetch(request)
+            fetchIsEmpty = loadCoreDataObject(coinReturn, "GBP")
+            
+        } catch let parsingError {
+            print("(!) Error:", parsingError)
+        
+            connectionToAPI("USD") //Default call must be USD
+        }
+        
+        if fetchIsEmpty == "empty" {
+            print("(!) forcing update from API")
+            connectionToAPI("USD")
+        } else {
+            print("loaded from DB")
+            enableButtons(true)
+            showDataInLabel("USD")
+        }
     }
     
     func connectionToAPI(_ code:String){
@@ -118,6 +158,81 @@ class ServiceController: UIViewController{
         task.resume() //Excecute task
     }
     
+    func loadCoreDataObject(_ fetchList: [CoinProps], _ code: String) -> String{
+        if fetchList.isEmpty{
+            print("(!) \(code) Empty")
+            return "empty"
+        }
+        coins[code] = fetchList[0]
+        print("NotEmpty \(String(describing: coins[code]!.rate))")
+        return "notEmpty"
+    }
+    
+    func fetchRequestIsEmpty(_ request: NSFetchRequest<CoinProps>) -> Bool{
+        do{
+            self.requestCoins = try PersistenceService.context.fetch(request)
+            if self.requestCoins.isEmpty {
+                return true
+            } else {
+                return false
+            }
+        } catch {
+            
+        }
+        return false
+    }
+    
+    
+    func createCoreDataObject(){
+        print("update data object")
+        let coinUSD = CoinProps(context: PersistenceService.context)
+        let coinGBP = CoinProps(context: PersistenceService.context)
+        let coinEUR = CoinProps(context: PersistenceService.context)
+        //let fetchRequest: NSFetchRequest<CoinProps> = CoinProps.fetchRequest()
+        
+        //if fetchRequestIsEmpty(fetchRequest){
+            coinUSD.code = varForCoinType!.bpi.USD.code
+            coinUSD.rate = varForCoinType!.bpi.USD.rate
+            coins["USD"] = coinUSD
+            
+            coinEUR.code = varForCoinType!.bpi.EUR.code
+            coinEUR.rate = varForCoinType!.bpi.EUR.rate
+            coins["EUR"] = coinEUR
+            
+            coinGBP.code = varForCoinType!.bpi.GBP.code
+            coinGBP.rate = varForCoinType!.bpi.GBP.rate
+            coins["GBP"] = coinGBP
+            PersistenceService.saveContext()
+        //}
+        /*else{
+            requestCoins[0].rate = varForCoinType!.bpi.USD.rate
+            requestCoins[1].rate = varForCoinType!.bpi.EUR.rate
+            requestCoins[2].rate = varForCoinType!.bpi.GBP.rate
+        }*/
+    }
+    
+    @IBAction func buttonTapped(_ sender: UIButton) {
+        
+        guard !coins.isEmpty else {
+            return
+        }
+        setLastButtonTapped(sender.titleLabel!.text!)
+        showDataInLabel(sender.titleLabel!.text!)
+        /*
+        switch sender.titleLabel?.text {
+        case "GBP":
+            self.rateLabel.text =  response.bpi.GBP.code + ": \n " + response.bpi.GBP.rate
+        case "Euro":
+            self.rateLabel.text = response.bpi.EUR.code + ": \n " + response.bpi.EUR.rate
+        default:
+            self.rateLabel.text = response.bpi.USD.code + ": \n $" + response.bpi.USD.rate
+        }*/
+    }
+    
+    @IBAction func reloadTapped(_ sender: Any) {
+        connectionToAPI(lastButtonTapped ?? "USD")
+    }
+
     func enableButtons(_ status: Bool){
         buttonEUR.isEnabled = status
         buttonGBP.isEnabled = status
@@ -142,55 +257,12 @@ class ServiceController: UIViewController{
     func showDataInLabel(_ code: String){
         self.rateLabel.text = "\(code): \n\(coins[code]!.rate!)"
         /*switch code {
-        case "GBP":
-            self.rateLabel.text =  code + ": \n " + coins[code]!.rate!
-        case "Euro":
-            self.rateLabel.text =  "EUR: \n " + varForCoinType!.bpi.EUR.rate
-        default:
-            self.rateLabel.text = code + ": \n $" + varForCoinType!.bpi.USD.rate
-        }*/
+         case "GBP":
+         self.rateLabel.text =  code + ": \n " + coins[code]!.rate!
+         case "Euro":
+         self.rateLabel.text =  "EUR: \n " + varForCoinType!.bpi.EUR.rate
+         default:
+         self.rateLabel.text = code + ": \n $" + varForCoinType!.bpi.USD.rate
+         }*/
     }
-    
-    func createCoreDataObject(){
-        print("update data object")
-        let coinUSD = CoinProps(context: PersistenceService.context)
-        let coinGBP = CoinProps(context: PersistenceService.context)
-        let coinEUR = CoinProps(context: PersistenceService.context)
-        
-        coinUSD.code = varForCoinType!.bpi.USD.code
-        coinUSD.rate = varForCoinType!.bpi.USD.rate
-        coins["USD"] = coinUSD
-        
-        coinEUR.code = varForCoinType!.bpi.EUR.code
-        coinEUR.rate = varForCoinType!.bpi.EUR.rate
-        coins["EUR"] = coinEUR
-        
-        coinGBP.code = varForCoinType!.bpi.GBP.code
-        coinGBP.rate = varForCoinType!.bpi.GBP.rate
-        coins["GBP"] = coinGBP
-        PersistenceService.saveContext()
-    }
-    
-    @IBAction func buttonTapped(_ sender: UIButton) {
-        
-        guard !coins.isEmpty else {
-            return
-        }
-        setLastButtonTapped(sender.titleLabel!.text!)
-        showDataInLabel(sender.titleLabel!.text!)
-        /*
-        switch sender.titleLabel?.text {
-        case "GBP":
-            self.rateLabel.text =  response.bpi.GBP.code + ": \n " + response.bpi.GBP.rate
-        case "Euro":
-            self.rateLabel.text = response.bpi.EUR.code + ": \n " + response.bpi.EUR.rate
-        default:
-            self.rateLabel.text = response.bpi.USD.code + ": \n $" + response.bpi.USD.rate
-        }*/
-    }
-    
-    @IBAction func reloadTapped(_ sender: Any) {
-        connectionToAPI(lastButtonTapped ?? "USD")
-    }
-    
 }
