@@ -60,9 +60,11 @@ class ServiceController: UIViewController{
 
         self.defaultColor = buttonUSD.backgroundColor
         
+        connectionToAPI("USD")
         //Load from database
-        let fetchRequest: NSFetchRequest<CoinProps> = CoinProps.fetchRequest()
-        getFromDataBase(fetchRequest)
+//        let fetchRequest: NSFetchRequest<CoinProps> = CoinProps.fetchRequest()
+//        getFromDataBase(fetchRequest)
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -72,36 +74,6 @@ class ServiceController: UIViewController{
         }
     }
     
-    func getFromDataBase(_ request: NSFetchRequest<CoinProps>){
-        var fetchIsEmpty: String = "notEmpty"
-        do {
-            request.predicate = NSPredicate(format: "code == %@", "USD")
-            var coinReturn = try PersistenceService.context.fetch(request)
-            fetchIsEmpty = loadCoreDataObject(coinReturn, "USD")
-            
-            request.predicate = NSPredicate(format: "code == %@", "EUR")
-            coinReturn = try PersistenceService.context.fetch(request)
-            fetchIsEmpty = loadCoreDataObject(coinReturn, "EUR")
-            
-            request.predicate = NSPredicate(format: "code == %@", "GBP")
-            coinReturn = try PersistenceService.context.fetch(request)
-            fetchIsEmpty = loadCoreDataObject(coinReturn, "GBP")
-            
-        } catch let parsingError {
-            print("(!) Error:", parsingError)
-        
-            connectionToAPI("USD") //Default call must be USD
-        }
-        
-        if fetchIsEmpty == "empty" {
-            print("(!) forcing update from API")
-            connectionToAPI("USD")
-        } else {
-            print("loaded from DB")
-            enableButtons(true)
-            showDataInLabel("USD")
-        }
-    }
     
     func connectionToAPI(_ code:String){
         guard let url = URL(string: "https://api.coindesk.com/v1/bpi/currentprice.json") //Create a URL with the actual url
@@ -117,9 +89,14 @@ class ServiceController: UIViewController{
                     print(error?.localizedDescription ?? "Response Error")
                     //Display alert message
                     DispatchQueue.main.async{
-                        if self.coins.isEmpty{
+                        let fetchRequest: NSFetchRequest<CoinProps> = CoinProps.fetchRequest()
+                        if self.fetchRequestIsEmpty(fetchRequest){ //IF the data base is empty, then there must be an error
                             self.rateLabel.text = "Connection error."
                             self.enableButtons(false)
+                        } else{ //If data base has values inside, then it should load rates from there.
+                            self.enableButtons(true)
+                            self.getFromDataBase(fetchRequest)
+                            self.showDataInLabel(code)
                         }
                         print("coins not empty")
                     }
@@ -158,14 +135,49 @@ class ServiceController: UIViewController{
         task.resume() //Excecute task
     }
     
-    func loadCoreDataObject(_ fetchList: [CoinProps], _ code: String) -> String{
+    func getFromDataBase(_ request: NSFetchRequest<CoinProps>){
+        var fetchIsEmpty = false
+        do {
+            //Search for each item in the data base, because we don't what order does it have if we
+            //call it for the whole request.
+            request.predicate = NSPredicate(format: "code == %@", "USD")
+            var coinReturn = try PersistenceService.context.fetch(request)
+            fetchIsEmpty = loadCoreDataObject(coinReturn, "USD")
+            
+            request.predicate = NSPredicate(format: "code == %@", "EUR")
+            coinReturn = try PersistenceService.context.fetch(request)
+            fetchIsEmpty = loadCoreDataObject(coinReturn, "EUR")
+            
+            request.predicate = NSPredicate(format: "code == %@", "GBP")
+            coinReturn = try PersistenceService.context.fetch(request)
+            fetchIsEmpty = loadCoreDataObject(coinReturn, "GBP")
+            
+        } catch let parsingError {
+            print("(!) Error:", parsingError)
+            
+            //connectionToAPI("USD") //Default call must be USD
+        }
+        
+        if fetchIsEmpty == true {
+            print("(!) forcing update from API")
+            //connectionToAPI("USD")
+        } else {
+            print("loaded from DB")
+            //enableButtons(true)
+            //showDataInLabel("USD")
+        }
+    }
+    
+    func loadCoreDataObject(_ fetchList: [CoinProps], _ code: String) -> Bool{
         if fetchList.isEmpty{
             print("(!) \(code) Empty")
-            return "empty"
+            return true
         }
+        //take the returned item of the data base and save it in the dictionary.
         coins[code] = fetchList.last
+        
         print("NotEmpty \(String(describing: coins[code]!.rate))")
-        return "notEmpty"
+        return false
     }
     
     func fetchRequestIsEmpty(_ request: NSFetchRequest<CoinProps>) -> Bool{
@@ -184,13 +196,16 @@ class ServiceController: UIViewController{
     
     
     func createCoreDataObject(){
-        print("update data object")
-        let coinUSD = CoinProps(context: PersistenceService.context)
-        let coinGBP = CoinProps(context: PersistenceService.context)
-        let coinEUR = CoinProps(context: PersistenceService.context)
-        //let fetchRequest: NSFetchRequest<CoinProps> = CoinProps.fetchRequest()
+        print("create data object")
+        let fetchRequest: NSFetchRequest<CoinProps> = CoinProps.fetchRequest()
         
-        //if fetchRequestIsEmpty(fetchRequest){
+        //check if the data base is empty
+        if fetchRequestIsEmpty(fetchRequest){ //if is empty, create new objects for the data base, and save it
+            print("DB is empty")
+            let coinUSD = CoinProps(context: PersistenceService.context)
+            let coinGBP = CoinProps(context: PersistenceService.context)
+            let coinEUR = CoinProps(context: PersistenceService.context)
+            
             coinUSD.code = varForCoinType!.bpi.USD.code
             coinUSD.rate = varForCoinType!.bpi.USD.rate
             coins["USD"] = coinUSD
@@ -203,12 +218,14 @@ class ServiceController: UIViewController{
             coinGBP.rate = varForCoinType!.bpi.GBP.rate
             coins["GBP"] = coinGBP
             PersistenceService.saveContext()
-        //}
-        /*else{
-            requestCoins[0].rate = varForCoinType!.bpi.USD.rate
-            requestCoins[1].rate = varForCoinType!.bpi.EUR.rate
-            requestCoins[2].rate = varForCoinType!.bpi.GBP.rate
-        }*/
+        }
+        else{ //If it isn't empty, uptade each one in the data base.
+            getFromDataBase(fetchRequest)
+            coins["USD"]?.rate = varForCoinType!.bpi.USD.rate
+            coins["EUR"]?.rate = varForCoinType!.bpi.EUR.rate
+            coins["GBP"]?.rate = varForCoinType!.bpi.GBP.rate
+            PersistenceService.saveContext()
+        }
     }
     
     @IBAction func buttonTapped(_ sender: UIButton) {
