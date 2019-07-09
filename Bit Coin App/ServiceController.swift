@@ -135,66 +135,6 @@ class ServiceController: UIViewController{
         task.resume() //Excecute task
     }
     
-    func getFromDataBase(_ request: NSFetchRequest<CoinProps>){
-        var fetchIsEmpty = false
-        do {
-            //Search for each item in the data base, because we don't what order does it have if we
-            //call it for the whole request.
-            request.predicate = NSPredicate(format: "code == %@", "USD")
-            var coinReturn = try PersistenceService.context.fetch(request)
-            fetchIsEmpty = loadCoreDataObject(coinReturn, "USD")
-            
-            request.predicate = NSPredicate(format: "code == %@", "EUR")
-            coinReturn = try PersistenceService.context.fetch(request)
-            fetchIsEmpty = loadCoreDataObject(coinReturn, "EUR")
-            
-            request.predicate = NSPredicate(format: "code == %@", "GBP")
-            coinReturn = try PersistenceService.context.fetch(request)
-            fetchIsEmpty = loadCoreDataObject(coinReturn, "GBP")
-            
-        } catch let parsingError {
-            print("(!) Error:", parsingError)
-            
-            //connectionToAPI("USD") //Default call must be USD
-        }
-        
-        if fetchIsEmpty == true {
-            print("(!) forcing update from API")
-            //connectionToAPI("USD")
-        } else {
-            print("loaded from DB")
-            //enableButtons(true)
-            //showDataInLabel("USD")
-        }
-    }
-    
-    func loadCoreDataObject(_ fetchList: [CoinProps], _ code: String) -> Bool{
-        if fetchList.isEmpty{
-            print("(!) \(code) Empty")
-            return true
-        }
-        //take the returned item of the data base and save it in the dictionary.
-        coins[code] = fetchList.last
-        
-        print("NotEmpty \(String(describing: coins[code]!.rate))")
-        return false
-    }
-    
-    func fetchRequestIsEmpty(_ request: NSFetchRequest<CoinProps>) -> Bool{
-        do{
-            self.requestCoins = try PersistenceService.context.fetch(request)
-            if self.requestCoins.isEmpty {
-                return true
-            } else {
-                return false
-            }
-        } catch {
-            
-        }
-        return false
-    }
-    
-    
     func createCoreDataObject(){
         print("create data object")
         let fetchRequest: NSFetchRequest<CoinProps> = CoinProps.fetchRequest()
@@ -228,6 +168,78 @@ class ServiceController: UIViewController{
         }
     }
     
+    func fetchRequestIsEmpty(_ request: NSFetchRequest<CoinProps>) -> Bool{
+        do{
+            self.requestCoins = try PersistenceService.context.fetch(request)
+            if self.requestCoins.isEmpty {
+                return true
+            } else {
+                return false
+            }
+        } catch {
+            
+        }
+        return false
+    }
+    
+    func getFromDataBase(_ request: NSFetchRequest<CoinProps>){
+        //var fetchIsEmpty = false
+//        do {
+            //Search for each item in the data base, because we don't know what order does it have if we
+            //call it for the whole request.
+//            request.predicate = NSPredicate(format: "code == %@", "USD")
+//            var coinReturn = try PersistenceService.context.fetch(request)
+//            fetchIsEmpty = loadCoreDataObject(coinReturn, "USD")
+//
+//            request.predicate = NSPredicate(format: "code == %@", "EUR")
+//            coinReturn = try PersistenceService.context.fetch(request)
+//            fetchIsEmpty = loadCoreDataObject(coinReturn, "EUR")
+//
+//            request.predicate = NSPredicate(format: "code == %@", "GBP")
+//            coinReturn = try PersistenceService.context.fetch(request)
+//            fetchIsEmpty = loadCoreDataObject(coinReturn, "GBP")
+            addPredicateToRequest(request, "USD")
+            addPredicateToRequest(request, "EUR")
+            addPredicateToRequest(request, "GBP")
+//        } catch let parsingError {
+//            print("(!) Error:", parsingError)
+//
+//            //connectionToAPI("USD") //Default call must be USD
+//        }
+//
+//        if fetchIsEmpty == true {
+//            print("(!) forcing update from API")
+//            //connectionToAPI("USD")
+//        } else {
+//            print("loaded from DB")
+//            //enableButtons(true)
+//            //showDataInLabel("USD")
+//        }
+    }
+    
+    func addPredicateToRequest(_ request: NSFetchRequest<CoinProps>, _ code: String){
+        do{
+            request.predicate = NSPredicate(format: "code == %@", code)
+            let coinReturn = try PersistenceService.context.fetch(request)
+            loadCoreDataObject(coinReturn, code)
+        } catch {
+            print("(!) Error in the predicate")
+        }
+    }
+    
+    func loadCoreDataObject(_ fetchList: [CoinProps], _ code: String){
+        if fetchList.isEmpty{
+            print("(!) \(code) Empty")
+            //return true
+            return
+        }
+        //take the returned item of the data base and save it in the dictionary.
+        coins[code] = fetchList.last
+        
+        print("NotEmpty \(String(describing: coins[code]!.rate))")
+        //return false
+    }
+    
     @IBAction func buttonTapped(_ sender: UIButton) {
         
         guard !coins.isEmpty else {
@@ -235,15 +247,6 @@ class ServiceController: UIViewController{
         }
         setLastButtonTapped(sender.titleLabel!.text!)
         showDataInLabel(sender.titleLabel!.text!)
-        /*
-        switch sender.titleLabel?.text {
-        case "GBP":
-            self.rateLabel.text =  response.bpi.GBP.code + ": \n " + response.bpi.GBP.rate
-        case "Euro":
-            self.rateLabel.text = response.bpi.EUR.code + ": \n " + response.bpi.EUR.rate
-        default:
-            self.rateLabel.text = response.bpi.USD.code + ": \n $" + response.bpi.USD.rate
-        }*/
     }
     
     @IBAction func reloadTapped(_ sender: Any) {
@@ -273,13 +276,5 @@ class ServiceController: UIViewController{
     
     func showDataInLabel(_ code: String){
         self.rateLabel.text = "\(code): \n\(coins[code]!.rate!)"
-        /*switch code {
-         case "GBP":
-         self.rateLabel.text =  code + ": \n " + coins[code]!.rate!
-         case "Euro":
-         self.rateLabel.text =  "EUR: \n " + varForCoinType!.bpi.EUR.rate
-         default:
-         self.rateLabel.text = code + ": \n $" + varForCoinType!.bpi.USD.rate
-         }*/
     }
 }
