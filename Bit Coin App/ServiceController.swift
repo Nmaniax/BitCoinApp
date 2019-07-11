@@ -83,9 +83,8 @@ class ServiceController: UIViewController{
         }
         
         let task = URLSession.shared.dataTask(with: url){ //URLseassion is a GET method
-            (data, response, error) in guard let _ = data, error == nil //Check if we got any kind of data and that there are no errors
-                else { //if error...
-                    print("Error(1):")
+            (data, response, error) in guard let _ = data, error == nil else { //Check if we got any kind of data and that there are no errors
+                    print("Error(1):") //if error...
                     print(error?.localizedDescription ?? "Response Error")
                     //Display alert message
                     DispatchQueue.main.async{
@@ -183,6 +182,9 @@ class ServiceController: UIViewController{
     }
     
     func getFromDataBase(_ request: NSFetchRequest<CoinProps>){
+        addPredicateToRequest(request, "USD")
+        addPredicateToRequest(request, "EUR")
+        addPredicateToRequest(request, "GBP")
         //var fetchIsEmpty = false
 //        do {
             //Search for each item in the data base, because we don't know what order does it have if we
@@ -198,9 +200,7 @@ class ServiceController: UIViewController{
 //            request.predicate = NSPredicate(format: "code == %@", "GBP")
 //            coinReturn = try PersistenceService.context.fetch(request)
 //            fetchIsEmpty = loadCoreDataObject(coinReturn, "GBP")
-            addPredicateToRequest(request, "USD")
-            addPredicateToRequest(request, "EUR")
-            addPredicateToRequest(request, "GBP")
+        
 //        } catch let parsingError {
 //            print("(!) Error:", parsingError)
 //
