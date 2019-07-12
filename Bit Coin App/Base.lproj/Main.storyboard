@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
-    <device id="retina6_1" orientation="portrait">
+    <device id="retina6_5" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
@@ -22,29 +22,30 @@
                                 <rect key="frame" x="20" y="44" width="374" height="798"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" axis="vertical" distribution="fillEqually" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="v9w-Zh-nh3" userLabel="Data Stack View">
-                                        <rect key="frame" x="0.0" y="0.0" width="374" height="440"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="374" height="420"/>
                                         <subviews>
                                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="bitcoin-logo" translatesAutoresizingMaskIntoConstraints="NO" id="ilq-nx-hC2">
-                                                <rect key="frame" x="0.0" y="0.0" width="374" height="210"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="374" height="200"/>
                                             </imageView>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" text="_" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="skD-uh-TFn" userLabel="Value">
-                                                <rect key="frame" x="0.0" y="230" width="374" height="210"/>
+                                                <rect key="frame" x="0.0" y="220" width="374" height="200"/>
                                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
                                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                         </subviews>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="440" id="OUh-KG-ZOL">
+                                            <constraint firstAttribute="height" constant="420" id="OUh-KG-ZOL">
+                                                <variation key="heightClass=compact-widthClass=compact" constant="200"/>
                                                 <variation key="heightClass=compact-widthClass=regular" constant="200"/>
                                             </constraint>
                                         </constraints>
                                     </stackView>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillProportionally" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="NM4-z8-TZq" userLabel="Buttons Stack View">
-                                        <rect key="frame" x="0.0" y="460" width="374" height="338"/>
+                                        <rect key="frame" x="0.0" y="440" width="374" height="358"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" verticalHuggingPriority="248" horizontalCompressionResistancePriority="748" verticalCompressionResistancePriority="748" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="whh-FV-8Ug">
-                                                <rect key="frame" x="0.0" y="0.0" width="374" height="92"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="374" height="97.666666666666671"/>
                                                 <color key="backgroundColor" red="0.80242282152175903" green="0.46522045135498047" blue="0.069256357848644257" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <state key="normal" title="Reload">
                                                     <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -54,10 +55,10 @@
                                                 </connections>
                                             </button>
                                             <stackView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" verticalHuggingPriority="249" horizontalCompressionResistancePriority="749" verticalCompressionResistancePriority="749" distribution="fillEqually" alignment="center" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="3zD-aA-ItU" userLabel="Button Stack View">
-                                                <rect key="frame" x="0.0" y="102" width="374" height="236"/>
+                                                <rect key="frame" x="0.0" y="107.66666666666664" width="374" height="250.33333333333337"/>
                                                 <subviews>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uPR-8x-yER">
-                                                        <rect key="frame" x="0.0" y="83" width="111.5" height="70"/>
+                                                        <rect key="frame" x="0.0" y="90" width="111.33333333333333" height="70"/>
                                                         <color key="backgroundColor" red="0.80241793394088745" green="0.46649556449633889" blue="0.067020612718442535" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="70" id="B82-q8-Jfw"/>
@@ -70,7 +71,7 @@
                                                         </connections>
                                                     </button>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zHp-mr-93K" userLabel="USD">
-                                                        <rect key="frame" x="131.5" y="83" width="111" height="70"/>
+                                                        <rect key="frame" x="131.33333333333334" y="90" width="111.33333333333334" height="70"/>
                                                         <color key="backgroundColor" red="0.80241793394088745" green="0.46649556449633889" blue="0.067020612718442535" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="70" id="xRA-qd-ST7"/>
@@ -83,7 +84,7 @@
                                                         </connections>
                                                     </button>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uPB-6P-6Wq">
-                                                        <rect key="frame" x="262.5" y="83" width="111.5" height="70"/>
+                                                        <rect key="frame" x="262.66666666666669" y="90" width="111.33333333333331" height="70"/>
                                                         <color key="backgroundColor" red="0.80241793394088745" green="0.46649556449633889" blue="0.067020612718442535" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="70" id="D7Y-lZ-MJc"/>
